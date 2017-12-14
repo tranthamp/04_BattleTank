@@ -33,10 +33,13 @@ ATank* ATankPlayerController::GetControlledTank() const {
 
 bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) const {
 	bool Hit = false;
-	OutHitLocation = FVector(1.0);
-	// Line trace through the crosshair
-	// Save the location of the hit
-	// If we hit something, return true
-	// Else, return false
+
+	// Find crosshair position
+	int32 ViewportSizeX, ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	FVector2D ScreenLocation(ViewportSizeX * CrossHairXLocation, ViewportSizeY * CrossHairYLocation);
+
+	// Deproject the screen position to the world position
+	// Line-trace along that look direction (up to some maximum range)
 	return Hit;
 }
