@@ -2,10 +2,6 @@
 
 #include "TankPlayerController.h"
 
-ATank* ATankPlayerController::GetControlledTank() const {
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
@@ -15,4 +11,17 @@ void ATankPlayerController::BeginPlay() {
 	} else {
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController NOT possessing a Tank"));
 	}
+}
+
+void ATankPlayerController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	AimTowardsCrosshair();
+}
+
+void ATankPlayerController::AimTowardsCrosshair() {
+	if (!GetControlledTank()) { return; }
+}
+
+ATank* ATankPlayerController::GetControlledTank() const {
+	return Cast<ATank>(GetPawn());
 }
