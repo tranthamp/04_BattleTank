@@ -23,7 +23,7 @@ void ATankPlayerController::AimTowardsCrosshair() {
 
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation)) {
-		UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *(HitLocation.ToString()));
+		//UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *(HitLocation.ToString()));
 	}
 }
 
@@ -40,6 +40,16 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	FVector2D ScreenLocation(ViewportSizeX * CrossHairXLocation, ViewportSizeY * CrossHairYLocation);
 
 	// Deproject the screen position to the world position
+	FVector LookDirection;
+	if (GetLookDirection(ScreenLocation, LookDirection)) {
+		UE_LOG(LogTemp, Warning, TEXT("Look direction: %s"), *(LookDirection.ToString()));
+	}
+
 	// Line-trace along that look direction (up to some maximum range)
 	return Hit;
+}
+
+bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& OutLookDirection) const {
+	FVector WorldLocation;
+	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, WorldLocation, OutLookDirection);
 }
