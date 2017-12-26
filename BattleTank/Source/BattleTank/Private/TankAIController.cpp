@@ -14,17 +14,24 @@ ATank* ATankAIController::GetPlayerTank() const {
 void ATankAIController::BeginPlay() {
 	Super::BeginPlay();
 
-	ATank* AiTank = GetControlledTank();
+	AiTank = GetControlledTank();
 	if (AiTank) {
 		UE_LOG(LogTemp, Warning, TEXT("AIController possessing: %s"), *(AiTank->GetName()));
 	} else {
 		UE_LOG(LogTemp, Warning, TEXT("AIController NOT possessing a Tank"));
 	}
 
-	ATank* PlayerTank = GetPlayerTank();
+	PlayerTank = GetPlayerTank();
 	if (PlayerTank) {
 		UE_LOG(LogTemp, Warning, TEXT("AIController PlayerTank: %s"), *(PlayerTank->GetName()));
 	} else {
 		UE_LOG(LogTemp, Warning, TEXT("AIController NO PlayerTank"));
+	}
+}
+
+void ATankAIController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	if (AiTank && PlayerTank) {
+		AiTank->AimAt(PlayerTank->GetActorLocation());
 	}
 }
