@@ -14,10 +14,10 @@ ATank::ATank() {
 
 void ATank::Fire() {
 	if (!Barrel) { return; }
-	UE_LOG(LogTemp, Warning, TEXT("Firing!"));
-	auto Location = Barrel->GetSocketLocation(FName("Projectile"));
-	auto Rotation = Barrel->GetSocketRotation(FName("Projectile"));
-	GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Location, Rotation);
+	FVector Location = Barrel->GetSocketLocation(FName("Projectile"));
+	FRotator Rotation = Barrel->GetSocketRotation(FName("Projectile"));
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Location, Rotation);
+	Projectile->LaunchProjectile(LaunchSpeed);
 }
 
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet) {
