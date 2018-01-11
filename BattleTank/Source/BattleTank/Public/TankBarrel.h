@@ -7,7 +7,7 @@
 #include "TankBarrel.generated.h"
 
 // Holds data and methods for the tank's barrel
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 {
 	GENERATED_BODY()
