@@ -16,6 +16,7 @@ class BATTLETANK_API ATankAIController : public AAIController
 private:
 	ATank* AiTank = nullptr;
 	ATank* PlayerTank = nullptr;
+	float AcceptanceRadius = 3000.0f;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
