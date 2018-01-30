@@ -2,6 +2,7 @@
 
 #include "Tank.h"
 #include "TankBarrel.h"
+#include "TankAimingComponent.h"
 #include "Projectile.h"
 #include "Engine/World.h"
 
@@ -26,6 +27,11 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ATank::BeginPlay() {
+	Super::BeginPlay();
+}
+
 void ATank::AimAt(FVector HitLocation) {
-	//TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
+	if (!TankAimingComponent) { return; }
+	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }

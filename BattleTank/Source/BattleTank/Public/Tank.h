@@ -7,6 +7,7 @@
 #include "Tank.generated.h"
 
 class UTankBarrel;
+class UTankAimingComponent;
 class AProjectile;
 
 UCLASS()
@@ -34,9 +35,13 @@ private:
 
 	UTankBarrel* Barrel = nullptr;
 
+	UTankAimingComponent* TankAimingComponent = nullptr;
+
 	// Sets default values for this pawn's properties
 	ATank();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void BeginPlay() override;
 };
