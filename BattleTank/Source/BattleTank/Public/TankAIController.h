@@ -6,16 +6,12 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
-class ATank;
-
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 
 private:
-	ATank* AiTank = nullptr;
-	ATank* PlayerTank = nullptr;
 	float AcceptanceRadius = 3000.0f;
 
 	virtual void BeginPlay() override;
