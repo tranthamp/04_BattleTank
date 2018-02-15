@@ -11,13 +11,12 @@ void ATankAIController::BeginPlay() {
 void ATankAIController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	APawn* AiTank = GetPawn();
 	APawn* PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (!ensure(AiTank && PlayerTank)) { return; }
+	if (!ensure(PlayerTank)) { return; }
 	MoveToActor(PlayerTank, AcceptanceRadius);
 
 	UTankAimingComponent* AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (!ensure(AimingComponent)) { return; }
 	AimingComponent->AimAt(PlayerTank->GetActorLocation());
-	//AiTank->Fire();
+	AimingComponent->Fire();
 }
