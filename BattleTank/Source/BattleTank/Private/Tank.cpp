@@ -12,8 +12,10 @@ ATank::ATank() {
 }
 
 void ATank::Fire() {
+	if (!ensure(Barrel)) { return; }
+
 	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeSeconds;
-	if (Barrel && isReloaded) {
+	if (isReloaded) {
 		FVector Location = Barrel->GetSocketLocation(FName("Projectile"));
 		FRotator Rotation = Barrel->GetSocketRotation(FName("Projectile"));
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Location, Rotation);
@@ -32,6 +34,6 @@ void ATank::BeginPlay() {
 }
 
 void ATank::AimAt(FVector HitLocation) {
-	if (!TankAimingComponent) { return; }
+	if (!ensure(TankAimingComponent)) { return; }
 	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
