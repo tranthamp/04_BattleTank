@@ -9,7 +9,7 @@
 #include "Engine/World.h"
 
 UTankAimingComponent::UTankAimingComponent() {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet) {
@@ -24,7 +24,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 	FVector EndLocation = HitLocation;
 	
 	if (UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, EndLocation, LaunchSpeed, false, 0.0f, 0.0f, ESuggestProjVelocityTraceOption::DoNotTrace)) {
-		FVector AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		FString TankName = GetOwner()->GetName();
 		MoveBarrelTowards(AimDirection);
 		MoveTurretTowards(AimDirection);
@@ -32,7 +32,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 }
 
 void UTankAimingComponent::Fire() {
-	if (FiringState != EFiringState::RELOADING) {
+	if (FiringState == EFiringState::LOCKED) {
 		if (!ensure(Barrel)) { return; }
 		if (!ensure(ProjectileBlueprint)) { return; }
 		FVector Location = Barrel->GetSocketLocation(FName("Projectile"));
@@ -62,8 +62,20 @@ void UTankAimingComponent::BeginPlay() {
 }
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
-	UE_LOG(LogTemp, Warning, TEXT("TICKING"));
-	if ((FPlatformTime::Seconds() - LastFireTime) > ReloadTimeSeconds) {
+	UE_LOG(LogTemp, Warning, TEXT("Ticking..."))
+	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeSeconds) {
+		UE_LOG(LogTemp, Warning, TEXT("Reloading..."))
 		FiringState = EFiringState::RELOADING;
+	} else if (IsBarrelMoving()) {
+		UE_LOG(LogTemp, Warning, TEXT("Barrel moving..."))
+		FiringState = EFiringState::AIMING;
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("Locked..."))
+		FiringState = EFiringState::LOCKED;
 	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving() const {
+	if (!ensure(Barrel)) { return false; }
+	return !Barrel->GetForwardVector().Equals(AimDirection, 0.1f);
 }
