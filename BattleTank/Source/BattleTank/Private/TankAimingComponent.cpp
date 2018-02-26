@@ -32,10 +32,9 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 }
 
 void UTankAimingComponent::Fire() {
-	if (!ensure(Barrel && ProjectileBlueprint)) { return; }
-
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeSeconds;
-	if (isReloaded) {
+	if (FiringState != EFiringState::RELOADING) {
+		if (!ensure(Barrel)) { return; }
+		if (!ensure(ProjectileBlueprint)) { return; }
 		FVector Location = Barrel->GetSocketLocation(FName("Projectile"));
 		FRotator Rotation = Barrel->GetSocketRotation(FName("Projectile"));
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Location, Rotation);
@@ -56,4 +55,15 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - TurretRotator;
 	Turret->Rotate(DeltaRotator.Yaw);
+}
+
+void UTankAimingComponent::BeginPlay() {
+	LastFireTime = FPlatformTime::Seconds();
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
+	UE_LOG(LogTemp, Warning, TEXT("TICKING"));
+	if ((FPlatformTime::Seconds() - LastFireTime) > ReloadTimeSeconds) {
+		FiringState = EFiringState::RELOADING;
+	}
 }
