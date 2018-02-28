@@ -16,7 +16,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void SetThrottle(float Throttle);
 
+	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 private:
+	UTankTrack();
+
 	// Max force per track in Newtons
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float MaxDrivingForce = 400000.0f; // 40000 kg * 10 m/(s*s)
