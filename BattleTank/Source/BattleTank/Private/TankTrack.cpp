@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankTrack.h"
+#include "Engine/World.h"
 
 UTankTrack::UTankTrack() {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UTankTrack::BeginPlay() {
@@ -11,11 +12,13 @@ void UTankTrack::BeginPlay() {
 }
 
 void UTankTrack::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit) {
-	UE_LOG(LogTemp, Warning, TEXT("On ground"));
+	DriveTrack();
+	ApplySidewaysForce();
+	CurrentThrottle = 0.0f;
 }
 
-void UTankTrack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+void UTankTrack::ApplySidewaysForce() {
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 	auto SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
 	auto CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
 	auto TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
@@ -23,9 +26,14 @@ void UTankTrack::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	TankRoot->AddForce(CorrectionForce);
 }
 
-void UTankTrack::SetThrottle(float Throttle) {
-	FVector ForceApplied = GetForwardVector() * Throttle * MaxDrivingForce;
+void UTankTrack::DriveTrack() {
+	FVector ForceApplied = GetForwardVector() * CurrentThrottle * MaxDrivingForce;
 	FVector ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
+}
+
+void UTankTrack::SetThrottle(float Throttle) {
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+	DriveTrack();
 }
