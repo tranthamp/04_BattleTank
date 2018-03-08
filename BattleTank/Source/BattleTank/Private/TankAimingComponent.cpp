@@ -54,7 +54,14 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
 	FRotator TurretRotator = Turret->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - TurretRotator;
-	Turret->Rotate(DeltaRotator.Yaw);
+
+	float Yaw = DeltaRotator.Yaw;
+	if (Yaw < -180.0f) {
+		Yaw += 360.0f;
+	} else if (Yaw > 180.0f) {
+		Yaw -= 360.0f;
+	}
+	Turret->Rotate(Yaw);
 }
 
 void UTankAimingComponent::BeginPlay() {
