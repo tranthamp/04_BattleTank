@@ -43,6 +43,10 @@ void UTankAimingComponent::Fire() {
 	}
 }
 
+EFiringState UTankAimingComponent::GetFiringState() const {
+	return FiringState;
+}
+
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
 	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
