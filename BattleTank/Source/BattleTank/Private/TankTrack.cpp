@@ -26,14 +26,13 @@ void UTankTrack::ApplySidewaysForce() {
 	TankRoot->AddForce(CorrectionForce);
 }
 
+void UTankTrack::SetThrottle(float Throttle) {
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+}
+
 void UTankTrack::DriveTrack() {
 	FVector ForceApplied = GetForwardVector() * CurrentThrottle * MaxDrivingForce;
 	FVector ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
-}
-
-void UTankTrack::SetThrottle(float Throttle) {
-	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
-	DriveTrack();
 }
