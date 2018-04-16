@@ -5,7 +5,7 @@
 #include "Particles/ParticleSystemComponent.h"
 
 AProjectile::AProjectile() {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Collision Mesh"));
 	SetRootComponent(CollisionMesh);
@@ -13,7 +13,11 @@ AProjectile::AProjectile() {
 	CollisionMesh->SetVisibility(true);
 
 	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>(FName("Launch Blast"));
-	LaunchBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	LaunchBlast->SetupAttachment(RootComponent);
+
+	ImpactBlast = CreateDefaultSubobject<UParticleSystemComponent>(FName("Impact Blast"));
+	ImpactBlast->SetupAttachment(RootComponent);
+	ImpactBlast->bAutoActivate = false;
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement Component"));
 	ProjectileMovementComponent->bAutoActivate = false;
@@ -26,8 +30,10 @@ void AProjectile::LaunchProjectile(float LaunchSpeed) {
 
 void AProjectile::BeginPlay() {
 	Super::BeginPlay();
+	CollisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 }
 
-void AProjectile::Tick(float DeltaTime) {
-	Super::Tick(DeltaTime);
+void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit) {
+	LaunchBlast->Deactivate();
+	ImpactBlast->Activate();
 }
