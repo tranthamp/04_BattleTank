@@ -2,6 +2,10 @@
 
 #include "Tank.h"
 
+float ATank::GetHealthPercent() const {
+	return (float)CurrentHealth / (float)StartingHealth;
+}
+
 ATank::ATank() {
 	PrimaryActorTick.bCanEverTick = false;
 }
