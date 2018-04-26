@@ -68,5 +68,6 @@ void ATankPlayerController::SetPawn(APawn* InPawn) {
 }
 
 void ATankPlayerController::OnTankDeath() {
-	UE_LOG(LogTemp, Warning, TEXT("TankPlayerController - Tank is dead"));
+	UE_LOG(LogTemp, Warning, TEXT("TankPlayerController - Tank is dead, spectating mode started"));
+	StartSpectatingOnly();
 }
